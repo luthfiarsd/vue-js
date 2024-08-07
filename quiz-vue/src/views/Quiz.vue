@@ -5,21 +5,25 @@
       :currentPercentage="currentPercentage"
     ></quiz-header>
     <quiz-content
+      v-if="!showResult"
       :question="quiz.questions[currentQuestion]"
       @selectOption="onSelectOpt"
     ></quiz-content>
-    <button
+    <quiz-result v-else :quizLength="quiz.questions.length" :sumCorrect="sumCorrect"></quiz-result>
+
+    <!-- <button
       @click="currentQuestion++"
       :disabled="currentQuestion === quiz.questions.length - 1"
     >
       Next
-    </button>
+    </button> -->
   </div>
 </template>
 
 <script setup>
 import QuizHeader from "../components/QuizHeader.vue";
 import QuizContent from "../components/QuizContent.vue";
+import QuizResult from "../components/QuizResult.vue";
 import QuizesData from "../data/quizes.json";
 import { useRoute } from "vue-router";
 import { computed, ref, watch } from "vue";
@@ -52,8 +56,14 @@ const onSelectOpt = (option) => {
   if (option.correct) {
     sumCorrect.value++;
   }
+  if (currentQuestion.value === quiz.questions.length - 1) {
+    showResult.value = true;
+    return;
+  }
   currentQuestion.value++;
 };
+
+const showResult = ref(false);
 </script>
 
 <style scoped></style>
